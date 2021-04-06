@@ -1,0 +1,25 @@
+{
+  "name": "websocket-",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mercadoboats/websocket-.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mercadoboats/websocket-/issues"
+  },
+  "homepage": "https://github.com/Mercadoboats/websocket-#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.0",
+    "express-socket.io": "^1.0.3"
+  }
+}
