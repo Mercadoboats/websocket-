@@ -1,44 +1,53 @@
-const express = require('express');
-const app = express();
-const http= require('http').Server(app);
-const io= require('socket.io')(http);
-const Productos = require('./api/productos')
-const hbs = require('express-handlebars');
-const PORT=3000;
+const express = require("express");
+const app = require('express')();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+const port = 8080
+const router = express.Router();
+const handlebars = require("express-handlebars");
+const path = require("path");
+const fs = require('fs');
 
-const productos=[
-    
-]
-
-app.engine('hbs', hbs({
+app.engine('hbs', handlebars({
     extname: '.hbs',
-    partialsDir:` ${__dirname}/views/partials`
+    defaultLayout: 'index.hbs',
+    layoutsDir: path.join(__dirname, "/views/layouts"),
+    partialsDir: path.join(__dirname, "/views/partials")
 }));
-
-app.set('view engine', 'hbs');
-
-app.use(express.urlencoded({ extended: false }));
-
-app.set('views', './views');
-
-app.get('/',(req,res)=>{
-    res.render('home');
-   
- });
-
- io.on('connection', socket=>{
-     console.log('Nuevo cliente conectado');
-
-     socket.on('producto',function(producto){
-         productos.push(producto);
-         io.sockets.emit('producto',productos);
-
-     });
- })
+app.set('view engine', 'hbs')
+app.set("views", path.join(__dirname, "views"));
+app.set(express.static('public'))
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+let listaProductos = [];
 
 
+// Index
+app.get('/', (req, res) => {
+    res.render('index', {products: listaProductos, productsExists: true, hayproductos: listaProductos !== 0});
+})
 
-const server=http.listen(PORT,()=>{console.log(`Servidor corriendo en:${PORT}`)})
-.on('error',error=>{console.log(`Error:${error}`)});
+app.use('/api', router)
+
+io.on('connection', (socket) => {
+    socket.on('productos', (producto) => {
+      io.emit('productos', producto);
+      const nuevoProducto = {
+          title: producto.title, 
+          price: producto.price, 
+          thumbnail: producto.thumbnail,
+          id: listaProductos.length + 1
+      };
+      listaProductos.push(nuevoProducto)
+      
+    });
+
+    
+})
+
+const server = http.listen(port, () => {
+    console.log(`Servidor inicializado en puerto ${server.address().port}`)
+})
+server.on('error', error => console.log(`Error en el servidor ${error}`))
 
 

@@ -1,0 +1,51 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <title>Websockets</title>
+</head>
+
+<body>
+    {{{ body }}}
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/moment"></script>
+    <script>
+        var socket = io();
+        let tabla = document.getElementById('products');
+        let form = document.getElementById('form');
+        let title = document.getElementById('title');
+        let price = document.getElementById('price');
+        let thumbnail = document.getElementById('thumbnail');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let producto = {
+                title: title.value,
+                price: price.value,
+                thumbnail: thumbnail.value
+            }
+            socket.emit('productos', producto);
+            title.value = '';
+            price.value = '';
+            thumbnail.value = '';
+
+        });
+        socket.on('productos', function (producto) {
+            console.log(producto)
+            let item = document.createElement('tr');
+            item.innerHTML = `<td>${producto.title}</td>` +
+                `<td>$${producto.price}</td>` +
+                `<td><img src="${producto.thumbnail}" alt="${producto.title}" style="max-width:30px;"></td>`;
+            tabla.appendChild(item);
+        });
+
+
+    </script>
+</body>
+
+</html>
